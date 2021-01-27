@@ -1,0 +1,8 @@
+Documentation/Implementation/Headers:
+	see ex_3.txt and ex_4.txt
+Test:
+	ex_5_test.c
+	
+	Use either the provided CMakeLists.txt or
+	gcc ex_5_test.c queue_int_linked_list.c stack_int_linked_list.c linked_list_int.c -std=c11 -Wall -g -O0 -o ex_5
+	then run the ex_5 executable

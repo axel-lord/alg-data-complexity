@@ -33,4 +33,7 @@ int int_stack_push(int_stack * stack, int value);
  */
 int int_stack_pop(int_stack * stack, int * return_int);
 
+/* Returns 1 if given stack is empty else 1 */
+int int_stack_empty(int_stack * stack);
+
 #endif
