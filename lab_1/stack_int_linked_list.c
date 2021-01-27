@@ -7,7 +7,7 @@ struct int_stack_struct
 	List * stack_data;
 };
 
-int_stack * create_stack()
+int_stack * create_int_stack()
 {
 	int_stack * n_stack = malloc(sizeof(int_stack));
 	if (n_stack == NULL) return NULL;
@@ -28,7 +28,7 @@ void free_int_stack(int_stack * stack)
 	free(stack);
 }
 
-int push(int_stack * stack, int value)
+int int_stack_push(int_stack * stack, int value)
 {
 	Node * d_node = createNode(value);
 	if (d_node == NULL)
@@ -41,14 +41,17 @@ int push(int_stack * stack, int value)
 	return result;
 }
 
-int pop(int_stack * stack, int * return_int)
+int int_stack_pop(int_stack * stack, int * return_int)
 {
-	Node * del_node = delete(stack->stack_data, stack->stack_data->NIL->next);
-	if (del_node == NULL)
+	if (isEmpty(stack->stack_data))
 		return 0;
-
-	*return_int = del_node->data;
-	free(del_node);
+	*return_int = stack->stack_data->NIL->next->data;
+	free(delete(stack->stack_data, stack->stack_data->NIL->next));
 	return 1;
+}
+
+int int_stack_empty(int_stack * stack)
+{
+	return isEmpty(stack->stack_data);
 }
 

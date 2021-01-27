@@ -1,0 +1,29 @@
+Documentation/Header: 
+	see ex_1.txt
+Implementation: 
+	see ex_1.txt
+Test:
+	ex_2_test.c
+
+	Use either the provided CMakeLists.txt or
+	gcc ex_2_test.c linked_list_int.c -std=c11 -Wall -g -O0 -o ex_2
+	then run the ex_2 executable
+Answers:
+	What are the minimum and maximum of L1?
+	Min: 1, Max: 10
+
+	What are the minimum and maximum of L2?
+	Min: 1, Max: 9
+
+	What is the successor and predecessor of the node with key 5 in L1?
+	Successor: 7, Predecessor: 3
+
+	What is the successor and predecessor of the node with key 9 in L2?
+	Successor: NULL, Predecessor: 6
+
+	What is the key of the predecessor in L2 of the maximum of L1?
+	Key: 9
+
+	What is the key of the predecessor in L1 of the maximum of L2?
+	Key: 8
+
