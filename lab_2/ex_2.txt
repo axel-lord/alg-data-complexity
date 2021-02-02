@@ -1,0 +1,4 @@
+Implemented in merge_sort.c with header merge_sort.h
+mergesort has a worst case complexity of O(n * lg(n))
+
+Tested in exercise 4 and 5
