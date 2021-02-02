@@ -1,0 +1,4 @@
+Implemented in quick_sort.c with header quick_sort.h, 
+quicksort has a worst case complexity of O(n²)
+
+tests are part of exercise 4 and 5
