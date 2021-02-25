@@ -1,0 +1,38 @@
+Implemented in depth_first_search.c and graph.c
+with headers depth_first_search.h, sized_uint_array.h and graph.h
+
+Testing ex_2_test.c
+
+the function is named findStronglyConnectedComponents
+
+To compile use either the included cmake file or
+gcc "-std=c11 -Wall -Wextra -g -O0" -lm -o ex_2_test ex_2_test.c graph.c depth_first_search.c
+then run the ex_2_test executable
+
+Graph:
+0 -> 1
+0 -> 3
+1 -> 0
+2 -> 4
+3 -> 6
+4 -> 3
+4 -> 5
+5 -> 2
+6 -> 7
+7 -> 4
+
+Output:
+
+DFS result:
+vertex 0: 1/16
+vertex 1: 2/3
+vertex 2: 9/10
+vertex 3: 4/15
+vertex 4: 7/12
+vertex 5: 8/11
+vertex 6: 5/14
+vertex 7: 6/13
+
+Strongly Connected Components:
+0 1
+3 4 7 6 2 5

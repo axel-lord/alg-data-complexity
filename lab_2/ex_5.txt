@@ -1,0 +1,65 @@
+Tests ran with Implementation using ex_5_test.c, quick_sort.c and merge_sort.c 
+with headers quick_sort.h, merge_sort.h and sized_array.h
+
+To test use either cmake or compile using
+gcc ex_5_test.c merge_sort.c quick_sort.c load_file.c -std=c11 -Wall -g -O0 -o ex_5
+the ex_5 executable should then be executed with the path to the sorting problems folder
+and/or one or more individual problems
+ex:
+./ex_5 sorting_problems/
+./ex_5 sorting_problems/ sorting_problems/test-10-3-problem
+./ex_5 sorting_problems/ sorting_problems/test-10-3-problem sorting_problems/test-100-2-problem
+./ex_5 sorting_problems/test-10-3-problem
+
+if a folder is given as an argument the ending "/" is needed
+when it is run with a folder the folder is assumed to contain the
+sorting problems that were handed out on blackboard (or at least files with the same names)
+and all problems will be tested
+
+for every individual problem given said problem will be tested on it's own
+and the result will be printed
+
+Questions:
+1-3:
+answered by running
+./ex_5 /sorting_problems/test-10-3-problem
+output:
+
+Sorting: sorting_problems/test-10-3-problem
+Mergesort:
+	4, 15, 23, 31, 40, 43, 43, 59, 94, 97
+Quicksort:
+	4, 15, 23, 31, 40, 43, 43, 59, 94, 97
+
+4:
+investigated by running
+./ex_5 sorting_problems/
+output:
+[...]
+Ticks used to sort all arrays:
+Mergesort:
+	Ticks Passed: 159448.000000, In seconds: 0.159448
+Quicksort:
+	Ticks Passed: 131371.000000, In seconds: 0.131371
+
+Comparison:
+Mergesort is 0.823911 times faster than quicksort!
+Quicksort is 1.213723 times faster than mergesort!
+
+On my system Quicksort seems to be faster than merge sort by ~20% for the provided
+problems this might however be different on other computers
+
+On the other hand if
+./ex_5 sorting_problems/test-10000-3-solution
+is ran we get
+output:
+
+Sorting: ../../lab_2/sorting_problems/test-10000-3-solution
+Mergesort:
+	Time: 2206.000000 ticks, 0.002206 seconds
+Quicksort:
+	Time: 603583.000000 ticks, 0.603583 seconds
+
+in this case quicksort has it's worst case complexity O(n^2)
+making mergesort about 274 times faster
+

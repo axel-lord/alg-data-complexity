@@ -13,6 +13,47 @@
 #define COL_BOLD "\033[1m"
 
 
+sized_uint_array * edgeListToSizedArray(Edge * edgeList, unsigned int vertex)
+{
+	sized_uint_array * output = malloc(sizeof(sized_uint_array));
+	if (output == NULL)
+		return NULL;
+
+	Edge * iter = edgeList;
+	unsigned int counter = 0;
+	while (iter != NULL)
+	{
+		++counter;
+		iter = iter->next;
+	}
+
+	if (counter == 0)
+	{
+		output->size = 0;
+		output->array = NULL;
+		return output;
+	}
+
+	unsigned int * arr = calloc(counter, sizeof(unsigned int));
+	if (arr == NULL)
+	{
+		free(output);
+		return NULL;
+	}
+	
+	iter = edgeList; unsigned int i = 0;
+	while (iter != NULL)
+	{
+		arr[i] = (iter->from == vertex) ? iter->to : iter->from;
+		++i;
+		iter = iter->next;
+	}
+
+	output->size = counter;
+	output->array = arr;
+	return output;
+}
+
 void freePointersInSizedArrayArray(sized_uint_array * array, int size)
 {
 	for (int i = 0; i < size; ++i)
@@ -107,7 +148,7 @@ int testDirected(int vertexCount)
 	printf(COL_YELLOW "Testing if edges were added correctly!" COL_RESET "\n");
 	for (int i = 0; i < edgeArraySize; ++i)
 	{
-		sized_uint_array * neighbors = getOutNeighbors(testGraph, i);
+		sized_uint_array * neighbors = edgeListToSizedArray(getOutNeighbors(testGraph, i), i);
 		if (neighbors == NULL)
 		{
 			printf("Vertex: %d ", i);
@@ -135,8 +176,7 @@ int testDirected(int vertexCount)
 			testFailure = 1;
 		}
 
-		free(neighbors->array);
-		free(neighbors);
+		FREE_SIZED_ARRAY(neighbors);
 
 		if (i % 100 == 0)
 			printf("Vertex: %d\r", i);
@@ -170,7 +210,9 @@ int testDirected(int vertexCount)
 	testFailure = 0;
 	for (int vertex = 0; vertex < vertexCount; ++vertex)
 	{
-		sized_uint_array * inNeighbors = getInNeighbors(testGraph, vertex);
+		sized_uint_array * inNeighbors = edgeListToSizedArray(
+			getInNeighbors(testGraph, vertex), vertex
+		);
 		if (inNeighbors == NULL)
 		{
 			printf(COL_RED "getInNeighbors returned NULL for vertex %d!" COL_RESET "\n", vertex);
@@ -207,7 +249,9 @@ int testDirected(int vertexCount)
 	testFailure = 0;
 	for (int vertex = 0; vertex < vertexCount; ++vertex)
 	{
-		sized_uint_array * outNeighbors = getOutNeighbors(testGraph, vertex);
+		sized_uint_array * outNeighbors = edgeListToSizedArray(
+			getOutNeighbors(testGraph, vertex), vertex
+		);
 		if (outNeighbors == NULL)
 		{
 			printf(COL_RED "getOutNeighbors returned NULL for vertex %d!" COL_RESET "\n", vertex);
@@ -244,12 +288,23 @@ int testDirected(int vertexCount)
 	testFailure = 0;
 	for (int vertex = 0; vertex < vertexCount; ++vertex)
 	{
-		sized_uint_array * neighbors = getNeighbors(testGraph, vertex);
-		if (neighbors == NULL)
+
+		Edge * neighborEdgeList;
+		if (!getNeighbors(testGraph, vertex, &neighborEdgeList))
 		{
 			printf(COL_RED "getNeighbors returned NULL for vertex %d!" COL_RESET "\n", vertex);
 			continue;
 		}
+
+		sized_uint_array * neighbors = edgeListToSizedArray(neighborEdgeList, vertex);
+		freeEdgeList(neighborEdgeList); // freed when no longer needed
+		if (neighbors == NULL)
+		{
+			printf(COL_RED "Trouble converting edgeList to array!" COL_RESET "\n");
+			continue;
+		}
+		
+
 		for (unsigned int i = 0; i < neighbors->size; ++i)
 		{
 			if (
@@ -399,9 +454,20 @@ int testUndirected(int vertexCount)
 	testFailure = 0;
 	for (int v = 0; v < vertexCount; ++v)
 	{
-		sized_uint_array * outNeighbors = getOutNeighbors(testGraph, v);
-		sized_uint_array * inNeighbors = getInNeighbors(testGraph, v);
-		sized_uint_array * neighbors = getNeighbors(testGraph, v);
+		
+		Edge * neighborList;
+		if (!getNeighbors(testGraph, v, &neighborList))
+		{
+			printf(COL_RED "Function failed! Stopping test..." COL_RESET "\n");
+			testFailure = -1;
+			break;
+		}
+
+		sized_uint_array * neighbors = edgeListToSizedArray(neighborList, v);
+		freeEdgeList(neighborList);
+
+		sized_uint_array * outNeighbors = edgeListToSizedArray(getOutNeighbors(testGraph, v), v);
+		sized_uint_array * inNeighbors = edgeListToSizedArray(getInNeighbors(testGraph, v), v);
 		if (outNeighbors == NULL || inNeighbors == NULL || neighbors == NULL)
 		{
 			printf(COL_RED "Function failed! Stopping test..." COL_RESET "\n");

@@ -1,8 +1,10 @@
 #include "sized_array.h"
 #include "quick_sort.h"
+#include <stdio.h>
 
 int quicksort_array(sized_array * Arr)
 {
+
 	if (Arr->size <= 1)
 		return 1;
 
@@ -33,7 +35,7 @@ int quicksort_array(sized_array * Arr)
 		Arr->size - iter - 1, // size
 		Arr->array + iter + 1 // array
 	};
-
+	
 	quicksort_array(&arr_1);
 	quicksort_array(&arr_2);
 

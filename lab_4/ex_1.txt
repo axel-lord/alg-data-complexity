@@ -1,0 +1,64 @@
+Implemented in graph.c
+with header graph.h
+
+Testing ex_1_test.c, merge_sort_uint.c 
+with headers sized_uint_array.h, merge_sort_uint.h
+
+the requested functions are in graph.c/h the other files
+are used for testing.
+
+To compile use either the included cmake file or run
+gcc -std=c11 -Wall -Wextra -g -O0 -lm -o ex_1_test ex_1_test.c graph.c merge_sort_uint.c
+and then run the ex_1_test executable
+the executable can be given an amount of vertices to use
+as graph size (default 16) the edges are then randomly created for
+one directed and one undirected graph
+
+Example:
+./ex_1_test 64
+
+Output:
+Building graph!
+Graph built!
+
+Testing if edges were added correctly!
+Edge test success!
+
+Testing if getNumVertices returns the right amount of edges!
+Vertex count success!
+   Expected: 64, Result: 64
+
+Testing if getNumEdges returns the right amount of edges!
+Edge count success!
+   Expected: 2004, Result: 2004
+
+Testing if getInNeighbors and hasEdge works!
+Test Success!
+
+Testing if getOutNeighbors and hasEdge works!
+Test Success!
+
+Testing if getNeighbors and hasEdge works!
+Test Success!
+
+-----
+Building undirected graph!
+Undirected graph built!
+
+Testing if getNumVertices returns the right amount of edges!
+Vertex count success!
+   Expected: 64, Result: 64
+
+Testing if getNumEdges returns the right amount of edges!
+Edge count success!
+   Expected: 1094, Result: 1094
+
+Test that hasEdge returns true for all added edges
+Test Success!
+
+Testing getNeighbors, getOutNeighbors and getInNeighbors
+   If they give the same result (they should)!
+   Also testing hasEdge on edges if above succeeds!
+   And if edges that should not exist do!
+Test Success!
+

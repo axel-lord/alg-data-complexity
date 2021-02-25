@@ -64,6 +64,7 @@ int main()
 #define RESET reset_buffers(arr_l1, arr_l2, p_num, &l1_s_arr, &l2_s_arr, &p_num_s_arr)
 #define PRINT print_arrays(&l1_s_arr, &l2_s_arr, &p_num_s_arr, "List1", "List2", "Personnummer")
 	
+	printf("\033[1mInitial Arrays:\033[0m\n");
 	RESET;
 	PRINT;
 	EMPTY_LINE;
@@ -72,6 +73,7 @@ int main()
 	quicksort_array(&l2_s_arr);
 	quicksort_array(&p_num_s_arr);
 
+	printf("\033[1mAfter Quicksort:\033[0m\n");
 	PRINT;
 	EMPTY_LINE;
 	RESET;
@@ -80,6 +82,7 @@ int main()
 	mergesort_array(&l2_s_arr);
 	mergesort_array(&p_num_s_arr);
 
+	printf("\033[1mAfter Mergesort:\033[0m\n");
 	PRINT;
 	EMPTY_LINE;
 

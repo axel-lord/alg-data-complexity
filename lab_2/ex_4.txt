@@ -1,0 +1,21 @@
+Implemented in merge_sort.c, quick_sort.c and ex_4_test.c 
+with headers sized_array.h, merge_sort.h and quick_sort.h
+
+To test use either the cmake or compile using
+gcc ex_4_test.c merge_sort.c quick_sort.c -std=c11 -Wall -g -O0 -o ex_4
+then run the ex_4 executable
+
+Output:
+Initial Arrays:
+List1: 3, 1, 5, 10, 8, 7
+List2: 5, 2, 9, 6, 1, 2
+Personnummer: 2, 0, 0, 0, 0, 3, 0, 4
+After Quicksort:
+List1: 1, 3, 5, 7, 8, 10
+List2: 1, 2, 2, 5, 6, 9
+Personnummer: 0, 0, 0, 0, 0, 2, 3, 4
+After Mergesort:
+List1: 1, 3, 5, 7, 8, 10
+List2: 1, 2, 2, 5, 6, 9
+Personnummer: 0, 0, 0, 0, 0, 2, 3, 4
+
