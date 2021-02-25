@@ -21,7 +21,7 @@ typedef struct edge_s
 	int isDirected;
 
 	/* Weight of the edge */
-	int weight;
+	double weight;
 } Edge;
 
 typedef struct graph_s
@@ -70,18 +70,22 @@ unsigned int getNumVertices(Graph * graph);
  */
 unsigned int getNumEdges(Graph * graph);
 
-/* Get a list of all vertices connected to vertex in any way
+/* Get a list of all edges connected to vertex in any way
  * Parameters:
  * graph, Graph containing vertices
  * vertex, index of vertex
+ * edgeListOutput, pointer to pointer to bind edgeList to
+ *   (needs to be manually freed)
  * Returns:
- * NULL, if no Neighbors exist 
- * an edge pointer/list otherwise (should be manually freed)
+ * 0, on failure
+ * 1 otherwise
  */
-Edge * getNeighbors(Graph * graph, unsigned int vertex);
+int getNeighbors(Graph * graph, unsigned int vertex, Edge ** edgeListOutput);
 
-/* Get a list of all vertices connected to vertex 
+/* Get a list of all edges going to the vertex 
  * with an edge from them to vertex
+ * the neighbor is found in the from attribute
+ * of each edge
  * Parameters:
  * graph, Graph containing vertices
  * vertex, index of vertex
@@ -91,8 +95,10 @@ Edge * getNeighbors(Graph * graph, unsigned int vertex);
  */
 Edge * getInNeighbors(Graph * graph, unsigned int vertex);
 
-/* Get a list of all vertices connected to vertex 
+/* Get a list of all edges going from the vertex 
  * with an edge from vertex to them
+ * the neighbor is found in the to attribute
+ * of each edge
  * Parameters:
  * graph, Graph containing vertices
  * vertex, index of vertex
@@ -107,7 +113,7 @@ Edge * getOutNeighbors(Graph * graph, unsigned int vertex);
  * Parameters:
  * graph, graph to get edges from
  * list, an edge double pointer to bind edge list to 
- *   set to null if graph has no edges
+ *   set to null if graph has no edges (needs to be manually freed)
  * Returns:
  * 0, on failure
  * 1, otherwise
@@ -150,7 +156,7 @@ int addUndirectedEdge(Graph * graph, unsigned int vertex1, unsigned int vertex2)
  *   is pointed to a message explaining the failure
  * 1, otherwise
  */
-int addDirectedWeightedEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, int weight);
+int addDirectedWeightedEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, double weight);
 
 /* Add an undirected edge to the graph
  * with a weight
@@ -164,7 +170,7 @@ int addDirectedWeightedEdge(Graph * graph, unsigned int vertexFrom, unsigned int
  *   is pointed to a message explaining the failure
  * 1, otherwise
  */
-int addUndirectedWeightedEdge(Graph * graph, unsigned int vertex1, unsigned int vertex2, int weight);
+int addUndirectedWeightedEdge(Graph * graph, unsigned int vertex1, unsigned int vertex2, double weight);
 
 /* points to error message from edge adding functions */
 extern const char * addEdgeFailureMessage;
@@ -195,6 +201,6 @@ int hasEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo);
  * 1, if edge exists
  * 0, otherwise
  */
-int getWeight(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, int * weight);
+int getWeight(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, double * weight);
 
 #endif //LAB_4_GRAPH_H

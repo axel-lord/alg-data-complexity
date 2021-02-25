@@ -1,0 +1,67 @@
+Implemented in binary_tree.c and print_sorted.c
+with headers binary_tree.h and print_sorted.h
+
+the functions are implemented with the names given in the
+course book (+ in_order_tree_walk, size and depth)
+with binary_tree prefixed
+
+example:
+binary_tree_search(BinaryTree * tree, bin_tree_data key)
+
+Descriptions on how the functions behave can be 
+found in the header files
+
+to compile use either cmake with provided CMakeLists.txt or
+gcc -std=c11 -Wall -Wextra -g -O0 -o ex_1_test ex_1_test.c binary_tree.c
+gcc -std=c11 -Wall -Wextra -g -O0 -o ex_1_alg ex_1_alg.c print_sorted.c binary_tree.c
+
+running ex_1_test executable will test the Implemented functions
+Output:
+---
+Array:
+5 0 3 -3 10 15 7 13 8
+Size: 9
+
+Tree Walk
+-3 0 3 5 7 8 10 13 15
+Size: 9, Depth: 4
+
+Removed: 13, 7, 0
+Tree Walk
+-3 3 5 8 10 15
+Size: 6, Depth: 3
+
+root-right-left:
+  Expected: 8
+       Key: 8
+root-right-right:
+  Expected: 15
+       Key: 15
+
+-3 3 5 8 10 15
+Maximum: 15, Minimum: -3
+Successor of:
+  -3: 3
+   5: 8
+  15: NULL
+Predecessor of:
+  -3: NULL
+   5: -3
+  15: 10
+
+Root removal:
+Removed Root: None, Tree: -3 3 5 8 10 15
+Removed Root:    5, Tree: -3 3 8 10 15
+Removed Root:    8, Tree: -3 3 10 15
+Removed Root:   10, Tree: -3 3 15
+Removed Root:   15, Tree: -3 3
+Removed Root:    3, Tree: -3
+Removed Root:   -3, Tree:
+---
+
+Running ex_1_alg with a list of integers as command line
+arguments will print them in sorted order
+ex:
+$ ./ex_1_alg 5 6 3 8 1 0 4 7 2 9
+Output:
+0 1 2 3 4 5 6 7 8 9

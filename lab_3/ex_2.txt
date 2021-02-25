@@ -1,0 +1,17 @@
+Implemented in print_sorted.c and binary_tree.c
+with headers print_sorted.h and binary_tree.h
+
+implemented function is
+print_sorted(int size, int * array);
+
+to compile use either cmake with provided CMakeLists.txt or
+gcc -std=c11 -Wall -Wextra -g -O0 -o ex_2_print ex_2_print.c print_sorted.c binary_tree.c load_file.c
+
+the executable ex_2_print can then be ran with file paths as command line
+arguments to print the integers contained in the file in sorted order
+
+Examples:
+$ ./ex_2_print sorting_problems/test-10-3-problem sorting_problems/test-10-5-problem
+Output:
+4 15 23 31 40 43 43 59 94 97
+7 34 36 50 59 63 69 98 98 99

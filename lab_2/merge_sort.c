@@ -14,7 +14,9 @@ int mergesort_array(sized_array * Arr)
 	arr_2.size = Arr->size - mid;
 
 	arr_2.array = Arr->array + mid;
-	arr_1.array = calloc(mid, sizeof(int));
+	int arr_1_arr [mid]; 
+	//arr_1.array = calloc(mid, sizeof(int));
+	arr_1.array = arr_1_arr;
 	if (arr_1.array == NULL)
 		return 0;
 
@@ -25,7 +27,7 @@ int mergesort_array(sized_array * Arr)
 	
 	if (!(mergesort_array(&arr_1)) || !(mergesort_array(&arr_2)))
 	{
-		free(arr_1.array);
+		//free(arr_1.array);
 		return 0;
 	}
 
@@ -57,6 +59,6 @@ int mergesort_array(sized_array * Arr)
 		++k;
 	}
 
-	free(arr_1.array);
+	//free(arr_1.array);
 	return 1;
 }

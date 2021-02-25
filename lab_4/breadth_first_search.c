@@ -58,13 +58,10 @@ int breadthFirstSearch(Graph * graph, unsigned int vertex, int * pathLength, uns
 	unsigned int vertexCurrent;
 	while (vertexDequeue(&queue, &vertexCurrent))
 	{
-		sized_uint_array * adjecent = getOutNeighbors(graph, vertexCurrent);
-		if (adjecent == NULL)
-			return 0;
-		
-		for (unsigned int i = 0; i < adjecent->size; ++i)
+		Edge * iterEdge = getOutNeighbors(graph, vertexCurrent);
+		while (iterEdge != NULL)
 		{
-			unsigned int v = adjecent->array[i];
+			unsigned int v = iterEdge->to;
 			if (vertexColor[v] == white)
 			{
 				vertexColor[v] = gray;
@@ -73,9 +70,6 @@ int breadthFirstSearch(Graph * graph, unsigned int vertex, int * pathLength, uns
 				vertexEnqueue(&queue, v);
 			}
 		}
-
-		free(adjecent->array);
-		free(adjecent);
 
 		vertexColor[vertexCurrent] = black;
 	}

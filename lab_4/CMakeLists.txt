@@ -8,3 +8,6 @@ target_link_libraries(ex_1_test m)
 
 add_executable(ex_2_test ex_2_test.c graph.c depth_first_search.c)
 target_link_libraries(ex_2_test m)
+
+add_executable(ex_3_test ex_3_test.c graph.c single_source_shortest_path.c)
+target_link_libraries(ex_3_test m)

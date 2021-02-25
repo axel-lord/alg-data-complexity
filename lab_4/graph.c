@@ -81,93 +81,57 @@ unsigned int getNumEdges(Graph * graph)
 	return graph->edgeCount;
 }
 
-static sized_uint_array * getMatchNeighbors(
-	Graph * graph, unsigned int vertex, 
-	int (*matchFunc)(Edge * edge, unsigned int vertex, unsigned int index, int * array)
-)
+int getNeighbors(Graph * graph, unsigned int vertex, Edge ** edgeListOutput)
 {
-	if (vertex >= getNumVertices(graph))
-		return NULL;
-	sized_uint_array * output = malloc(sizeof(sized_uint_array));
-	if (output == NULL)
-		return NULL;
-
-	int array [getNumVertices(graph)];
-
-	unsigned int numVertices = getNumVertices(graph);
-	unsigned int k = 0;
-	Edge * edge = graph->edges[vertex];
-	while (edge != NULL && k < numVertices)
+	Edge * edgeList = NULL;
+	Edge * iterEdge = graph->outEdges[vertex];
+	while (iterEdge != NULL)
 	{
-		k += (*matchFunc)(edge, vertex, k, array);
-		edge = edge->next;
-	}
-
-	if (k > 0)
-	{
-		output->array = calloc(k, sizeof(unsigned int));
-		if (output->array == NULL)
+		Edge * newEdge = malloc(sizeof(Edge));
+		if (newEdge == NULL)
 		{
-			free(output);
-			return NULL;
+			freeEdgeList(edgeList);
+			return 0;
 		}
-		memcpy(output->array, array, sizeof(int) * k); // NOLINT
+
+		memcpy(newEdge, iterEdge, sizeof(Edge)); // NOLINT
+		newEdge->next = edgeList;
+		edgeList = newEdge;
+
+		iterEdge = iterEdge->next;
 	}
-	else
-		output->array = NULL;
-	output->size = k;
-	
-	return output;
 
-}
+	iterEdge = graph->inEdges[vertex];
+	while(iterEdge != NULL)
+	{
+		if (iterEdge->isDirected && !hasEdge(graph, vertex, iterEdge->from)) 
+		{
+			Edge * newEdge = malloc(sizeof(Edge));
+			if (newEdge == NULL)
+			{
+				freeEdgeList(edgeList);
+				return 0;
+			}
 
-static int anyNeighbor(Edge * edge, unsigned int vertex, unsigned int index, int * array)
-{
-	if (edge->from == vertex)
-		array[index] = edge->to;
-	else
-		array[index] = edge->from;
+			memcpy(newEdge, iterEdge, sizeof(Edge)); // NOLINT
+			newEdge->next = edgeList;
+			edgeList = newEdge;
+		}
+		iterEdge = iterEdge->next;
+	}
+
+	*edgeListOutput = edgeList;
 	return 1;
 }
 
-sized_uint_array * getNeighbors(Graph * graph, unsigned int vertex)
+Edge * getInNeighbors(Graph * graph, unsigned int vertex)
 {
-	return getMatchNeighbors(graph, vertex, &anyNeighbor);
+	return graph->inEdges[vertex];
 }
 
-static int inNeighbor(Edge * edge, unsigned int vertex, unsigned int index, int * array)
+Edge * getOutNeighbors(Graph * graph, unsigned int vertex)
 {
-	if(!edge->isDirected)
-	{
-		array[index] = edge->to;
-		return 1;
-	}
-	if (edge->to == vertex)
-	{
-		array[index] = edge->from;
-		return 1;
-	}
-	return 0;
-}
-
-sized_uint_array * getInNeighbors(Graph * graph, unsigned int vertex)
-{
-	return getMatchNeighbors(graph, vertex, &inNeighbor);
-}
-
-static int outNeighbor(Edge * edge, unsigned int vertex, unsigned int index, int * array)
-{
-	if (edge->from == vertex) // undirected edges always has a from matching vertex
-	{
-		array[index] = edge->to;
-		return 1;
-	}
-	return 0;
-}
-
-sized_uint_array * getOutNeighbors(Graph * graph, unsigned int vertex)
-{
-	return getMatchNeighbors(graph, vertex, &outNeighbor);
+	return graph->outEdges[vertex];
 }
 
 int addDirectedEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo)
@@ -175,11 +139,8 @@ int addDirectedEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexT
 	return addDirectedWeightedEdge(graph, vertexFrom, vertexTo, 0);
 }
 
-int addDirectedWeightedEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, int weight)
+int addDirectedWeightedEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, double weight)
 {
-	if (vertexFrom == vertexTo) // in case of edge from vertex to self
-		return addUndirectedWeightedEdge(graph, vertexFrom, vertexTo, weight);
-
 	if (
 		vertexFrom >= getNumVertices(graph) || // edge not possible
 		vertexTo >= getNumVertices(graph) // edge not possible
@@ -213,80 +174,60 @@ int addDirectedWeightedEdge(Graph * graph, unsigned int vertexFrom, unsigned int
 	// set data of edges
 	edgeFrom->from = vertexFrom;
 	edgeFrom->to = vertexTo;
-	edgeFrom->isDirected = 1;
+	edgeFrom->isDirected = vertexFrom != vertexTo; // edge is undirected if it goes to self
 	edgeFrom->weight = weight;
 
 	memcpy(edgeTo, edgeFrom, sizeof(Edge)); // NOLINT
-	edgeFrom->next = graph->edges[vertexFrom];
-	edgeTo->next = graph->edges[vertexTo];
+	edgeFrom->next = graph->outEdges[vertexFrom];
+	edgeTo->next = graph->inEdges[vertexTo];
 
-	graph->edges[vertexFrom] = edgeFrom;
-	graph->edges[vertexTo] = edgeTo;
+	graph->outEdges[vertexFrom] = edgeFrom;
+	graph->inEdges[vertexTo] = edgeTo;
 	graph->edgeCount += 1;
 
 	return 1;
 }
 
-int addUndirectedEdge(Graph * graph, unsigned int vertex1, int unsigned vertex2)
+int addUndirectedEdge(Graph * graph, unsigned int vertexFrom, int unsigned vertexTo)
 {
-	return addUndirectedWeightedEdge(graph, vertex1, vertex2, 0);
+	return addUndirectedWeightedEdge(graph, vertexFrom, vertexTo, 0);
 }
 
-int addUndirectedWeightedEdge(Graph * graph, unsigned int vertex1, unsigned int vertex2, int weight)
+int addUndirectedWeightedEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, double weight)
 {
-	if (
-		vertex1 >= getNumVertices(graph) || // edge not possible
-		vertex2 >= getNumVertices(graph) // edge not possible
-	) {
-		addEdgeFailureMessage = EDGE_FAILURE_VERTEX_NOT_EXIST;
+	if (!addDirectedWeightedEdge(graph, vertexTo, vertexFrom, weight))
 		return 0;
-	}
 
-	if (
-		hasEdge(graph, vertex1, vertex2) || // edge exists in any direction
-		hasEdge(graph, vertex2, vertex1) // edge exists in any direction
-	) {
-		addEdgeFailureMessage = EDGE_FAILURE_EDGE_EXIST;
-		return 0;
-	}
-	
-	// create new edges
-	Edge * edgeFrom = malloc(sizeof(Edge));
-	if (edgeFrom == NULL)
+	if (vertexFrom != vertexTo) // in case of edge from vertex to self
 	{
-		addEdgeFailureMessage = EDGE_FAILURE_MALLOC;
-		return 0;
-	}
-
-	if (vertex1 != vertex2) // if the edge goes to self
-	{
-		Edge * edgeTo = malloc(sizeof(Edge));
-		if (edgeTo == NULL)
+		if (!addDirectedWeightedEdge(graph, vertexFrom, vertexTo, weight))
 		{
+			// cleanup
+			Edge * rEdge1 = graph->outEdges[vertexTo];
+			Edge * rEdge2 = graph->inEdges[vertexFrom];
+
+			graph->outEdges[vertexTo] = rEdge1->next;
+			graph->inEdges[vertexFrom] = rEdge2->next;
+
+			free(rEdge1);
+			free(rEdge2);
+
 			addEdgeFailureMessage = EDGE_FAILURE_MALLOC;
-			free(edgeFrom);
 			return 0;
 		}
-		
-		// set data of edge belonging to vertex2
-		edgeTo->from = vertex2;
-		edgeTo->to = vertex1;
-		edgeTo->isDirected = 0;
-		edgeTo->weight = weight;
-
-		edgeTo->next = graph->edges[vertex2];
-		graph->edges[vertex2] = edgeTo;
+		// set newly added edge's directed status to false
+		graph->outEdges[vertexFrom]->isDirected = 0;
+		graph->inEdges[vertexTo]->isDirected = 0;
 	}
 	
-	// set data of edge belonging to vertex1
-	edgeFrom->from = vertex1;
-	edgeFrom->to = vertex2;
-	edgeFrom->isDirected = 0;
-	edgeFrom->weight = weight;
+	// set edge's isDirected to false
+	graph->outEdges[vertexTo]->isDirected = 0;
+	graph->inEdges[vertexFrom]->isDirected = 0;
 
-	edgeFrom->next = graph->edges[vertex1];
-	graph->edges[vertex1] = edgeFrom;
-	graph->edgeCount += 1;
+	// decrement edgeCount since only "one" edge was added
+	if (vertexFrom != vertexTo)
+		--graph->edgeCount;
+
 	return 1;
 }
 
@@ -297,15 +238,10 @@ int hasEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo)
 		vertexTo >= getNumVertices(graph)
 	) return 0; // edge does not exist if and involved vertex does not
 
-	Edge * edge = graph->edges[vertexFrom];
+	Edge * edge = graph->outEdges[vertexFrom];
 	while (edge != NULL)
 	{
-		if (edge->isDirected)
-		{
-			if (edge->from == vertexFrom && edge->to == vertexTo)
-				return 1;
-		}
-		else if (edge->to == vertexTo) // from of all undirected edges is same as vertex
+		if (edge->to == vertexTo) // from of all undirected edges is same as vertex
 			return 1;
 		edge = edge->next;
 	}
@@ -313,25 +249,17 @@ int hasEdge(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo)
 	return 0;
 }
 
-int getWeight(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, int * weight)
+int getWeight(Graph * graph, unsigned int vertexFrom, unsigned int vertexTo, double * weight)
 {
 	if (
 		vertexFrom >= getNumVertices(graph) || 
 		vertexTo >= getNumVertices(graph)
 	) return 0; // edge does not exist if and involved vertex does not
 
-	Edge * edge = graph->edges[vertexFrom];
+	Edge * edge = graph->outEdges[vertexFrom];
 	while (edge != NULL)
 	{
-		if (edge->isDirected)
-		{
-			if (edge->from == vertexFrom && edge->to == vertexTo)
-			{
-				*weight = edge->weight;
-				return 1;
-			}
-		}
-		else if (edge->to == vertexTo) // from of all undirected edges is same as vertex
+		if (edge->to == vertexTo) // from of all undirected edges is same as vertex
 		{
 			*weight = edge->weight;
 			return 1;
@@ -347,24 +275,20 @@ int getAllEdges(Graph * graph, Edge ** list)
 	Edge * outputList = NULL;
 	for (unsigned int v = 0; v < graph->vertexCount; ++v)
 	{
-		Edge * edge = graph->edges[v];
-		while (edge != NULL)
+		Edge * iterEdge = graph->outEdges[v];
+		while (iterEdge != NULL)
 		{
-			if (
-				(edge->isDirected && edge->from == v) ||
-				(!edge->isDirected && edge->from <= edge->to)
-			) {
-				Edge * newEdge = malloc(sizeof(Edge));
-				if (newEdge == NULL)
-				{
-					freeEdgeList(outputList);
-					return 0;
-				}
-				memcpy(newEdge, edge, sizeof(Edge)); // NOLINT
-				newEdge->next = outputList;
-				outputList = newEdge;
+			Edge * newEdge = malloc(sizeof(Edge));
+			if (newEdge == NULL)
+			{
+				freeEdgeList(outputList);
+				return 0;
 			}
-			edge = edge->next;
+			memcpy(newEdge, iterEdge, sizeof(Edge)); // NOLINT
+			newEdge->next = outputList;
+			outputList = newEdge;
+
+			iterEdge = iterEdge->next;
 		}
 	}
 	*list = outputList;

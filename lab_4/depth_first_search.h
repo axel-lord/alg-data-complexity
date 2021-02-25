@@ -28,7 +28,19 @@ typedef struct SccOutput_s
  */
 int depthFirstSearch(Graph * graph, DFSOutput * output);
 
-/* print sccs in graph */
+/* print sccs in graph 
+ * and writes them to the privided
+ * output array
+ * Parameters:
+ * graph, Graph to search in
+ * output, pointer to a variable to get the output
+ *   components are stored as sized_uint_array pointers
+ *   in a pointer array, the pointer array (and the sized_uint_arrays)
+ *   can be freed using resetSccOutput
+ * Returns:
+ * 0, on failure
+ * 1, otherwise
+ */
 int findStronglyConnectedComponents(Graph * graph, SccOutput * output);
 
 /* free SccOutput content but not sccOut */

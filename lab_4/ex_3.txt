@@ -1,0 +1,51 @@
+Implemented in single_source_shortest_path.c and graph.c
+with headers single_source_shortest_path.h and graph.h
+
+function is named bellmanFord
+The function assumes there are no negative cycles
+in the graph
+
+Tests ex_3_test.c
+
+To compile use provided cmake file or run
+gcc -std=c11 -Wall -Wextra -g -O0 -lm -o ex_3_test ex_3_test.c graph.c single_source_shortest_path.c
+and run the ex_3_test executable
+
+Graphs:
+0 -> 1, w: 5
+0 -> 2, w: 3
+0 -> 3, w: 4
+1 -> 4, w: -2
+2 -> 1, w: -1
+2 -> 4, w: 4
+3 -> 2, w: -2
+3 -> 4, w: 2
+
+0 -> 1, w: 5.5
+0 -> 3, w: 5
+1 -> 0, w: 4.5 
+2 -> 4, w: 4
+3 -> 6, w: 3.5
+4 -> 3, w: 3
+4 -> 5, w: 2.5
+5 -> 2, w: 2
+6 -> 7, w: 1.5
+7 -> 4, w: 1
+
+Output:
+Vertex: 0, Prev: None, Distance: 0.0
+Vertex: 1, Prev:    2, Distance: 1.0
+Vertex: 2, Prev:    3, Distance: 2.0
+Vertex: 3, Prev:    0, Distance: 4.0
+Vertex: 4, Prev:    1, Distance: -1.0
+Test Success!
+
+Vertex: 0, Prev: None, Distance: 0.0
+Vertex: 1, Prev:    0, Distance: 5.5
+Vertex: 2, Prev:    5, Distance: 15.5
+Vertex: 3, Prev:    0, Distance: 5.0
+Vertex: 4, Prev:    7, Distance: 11.0
+Vertex: 5, Prev:    4, Distance: 13.5
+Vertex: 6, Prev:    3, Distance: 8.5
+Vertex: 7, Prev:    6, Distance: 10.0
+Test Success!

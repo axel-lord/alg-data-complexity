@@ -36,26 +36,25 @@ static int dfsVisit(
 	vColor * vertexColors, 
 	DFSOutput * outputBuffer, 
 	unsigned int * time,
-	sized_uint_array * (*neighborFunction)(Graph *, unsigned int),
+	Edge * (*neighborFunction)(Graph *, unsigned int),
 	vertexStack * vStack
 ) {
 	*time += 1;
 	outputBuffer[vertex].discover = *time;
 	vertexColors[vertex] = gray;
 
-	sized_uint_array * adjecent = (*neighborFunction)(graph, vertex);
-	if (adjecent == NULL)
-		return 0;
+	Edge * adjecent = (*neighborFunction)(graph, vertex);
 
-	for (unsigned int i = 0; i < adjecent->size; ++i)
+	while (adjecent != NULL)
 	{
-		unsigned int v = adjecent->array[i];
+		unsigned int v = adjecent->from == vertex ? adjecent->to : adjecent->from;
 		if (vertexColors[v] == white)
 		{
 			outputBuffer[v].root = v;
 			if (!dfsVisit(graph, v, vertexColors, outputBuffer, time, neighborFunction, vStack))
 				return 0;
 		}
+		adjecent = adjecent->next;
 	}
 
 	vertexColors[vertex] = black;
@@ -71,7 +70,7 @@ static int depthFirstSearchFlexible(
 	Graph * graph, DFSOutput * outputBuffer, 
 	unsigned int vertexCount,
 	vertexStack * vStack, 
-	sized_uint_array * (*neighborFunction)(Graph *, unsigned int)
+	Edge * (*neighborFunction)(Graph *, unsigned int)
 ) {
 	vColor vertexColors [vertexCount];
 
@@ -173,7 +172,8 @@ int findStronglyConnectedComponents(Graph * graph, SccOutput * output)
 				sArr->array = calloc(sccSize, sizeof(unsigned int));
 				if (sArr->array == NULL)
 				{
-					freeSizedJaggedArrayContent(sccArray, sccArraySize+1);
+					freeSizedJaggedArrayContent(sccArray, sccArraySize);
+					free(sArr);
 					return 0;
 				}
 

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(Lab1)
 
-set(CMAKE_C_FLAGS "-std=c11 -Wall -g -O0")
+set(CMAKE_C_FLAGS "-std=c11 -Wall -Wextra -g -O0")
 
 add_executable(ex_2 ex_2_test.c linked_list_int.c)
 

@@ -1,0 +1,15 @@
+Choose the best algorithm (among Insertion Sort, Merge Sort and Quick  Sort) to use in the following cases and explain your decision:
+The input array is sorted in descending order:
+  Mergesort since this is the worst case for both quicksort and insertionsort
+The input array is sorted in ascending order:
+  Insertionsort since this is it's best case giving it 
+  better time complexity than both merge and quicksort
+All elements in the array are the same:
+  Mergesort since depending on what kind of comparison 
+  was used (<= or <) the other algorithms are more
+  unpredicatble in their time
+There are both positive and negative numbers in the array:
+  Quicksort since nothing is really known about the array
+  and I don't think the sign matters. With quicksort 
+  having a good average case it might be preferable on 
+  an array we don't know anything about
